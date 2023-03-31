@@ -14,3 +14,11 @@ model Category {
   id String @id @default(uuid())
   name String @unique
 }
+model Book {
+  id String @id @default(uuid())
+  book_name String @unique
+}
+model Author {
+  id String @id @default(uuid())
+  name String @unique
+}
