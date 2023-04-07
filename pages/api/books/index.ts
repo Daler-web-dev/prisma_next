@@ -8,14 +8,28 @@ export default async function handler(
 ) {
 	switch (req.method) {
 		case "GET":
-			const books = await prisma.book.findMany();
+			const books = await prisma.book.findMany({
+				include: {
+					Category: true,
+					Author: true,
+				},
+			});
 			res.status(200).json({ data: books });
 			break;
 		case "POST":
 			if (!req.body.book_name)
 				return res.status(400).json({ error: "Missing name" });
 			const book = await prisma.book.create({
-				data: req.body,
+				data: {
+					book_name: req.body.book_name,
+					BookTag: {
+						connectOrCreate: req.body.tags.map((tag: string) => ({
+							where: { name: tag, Tag: { connect: { name: tag } } },
+							create: { name: tag, Tag: {create: {name: tag}} },	
+						})),
+					},
+				}
+				
 			});
 			res.status(201).json({ data: book });
 			break;

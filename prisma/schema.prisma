@@ -23,12 +23,27 @@ model Book {
   categoryId String?
   Author     Author?   @relation(fields: [authorId], references: [id])
   authorId   String?
+  BookTag    BookTag[]
 }
 
 model Author {
   id    String @id @default(uuid())
   name  String @unique
   books Book[] // does not exist in actual database
+}
+
+model Tag {
+  id      String    @id @default(uuid())
+  name    String    @unique
+  BookTag BookTag[]
+}
+
+model BookTag {
+  id     String @id @default(uuid())
+  Book   Book   @relation(fields: [bookId], references: [id])
+  bookId String
+  Tag    Tag    @relation(fields: [tagId], references: [id])
+  tagId  String
 }
 
 // One category has many books => 1:N
