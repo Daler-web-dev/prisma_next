@@ -11,14 +11,26 @@ datasource db {
 }
 
 model Category {
-  id String @id @default(uuid())
-  name String @unique
+  id    String @id @default(uuid())
+  name  String @unique
+  books Book[] // does not exist in actual database
 }
+
 model Book {
-  id String @id @default(uuid())
-  book_name String @unique
+  id         String    @id @default(uuid())
+  book_name  String    @unique
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  Author     Author?   @relation(fields: [authorId], references: [id])
+  authorId   String?
 }
+
 model Author {
-  id String @id @default(uuid())
-  name String @unique
+  id    String @id @default(uuid())
+  name  String @unique
+  books Book[] // does not exist in actual database
 }
+
+// One category has many books => 1:N
+// One author has many books => 1:N
+// Many books have more than one authors => N:M
