@@ -16,6 +16,12 @@ model Category {
   books Book[] // does not exist in actual database
 }
 
+model Author {
+  id    String @id @default(uuid())
+  name  String @unique
+  books Book[] // does not exist in actual database
+}
+
 model Book {
   id         String    @id @default(uuid())
   book_name  String    @unique
@@ -24,12 +30,6 @@ model Book {
   Author     Author?   @relation(fields: [authorId], references: [id])
   authorId   String?
   BookTag    BookTag[]
-}
-
-model Author {
-  id    String @id @default(uuid())
-  name  String @unique
-  books Book[] // does not exist in actual database
 }
 
 model Tag {

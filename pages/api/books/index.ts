@@ -19,17 +19,39 @@ export default async function handler(
 		case "POST":
 			if (!req.body.book_name)
 				return res.status(400).json({ error: "Missing name" });
+				const {tags, ...bookData} = req.body;
+
+			const bookTags = tags.map((tag: string) => {
+				return {
+					Tag: {
+						connectOrCreate: {
+							where: {
+								name: tag,
+							},
+							create: {
+								name: tag,
+							},
+						},
+					},
+				};
+			});
+
 			const book = await prisma.book.create({
 				data: {
-					book_name: req.body.book_name,
+					...bookData,
 					BookTag: {
-						connectOrCreate: req.body.tags.map((tag: string) => ({
-							where: { name: tag, Tag: { connect: { name: tag } } },
-							create: { name: tag, Tag: {create: {name: tag}} },	
-						})),
+						create: bookTags,
 					},
-				}
-				
+				},
+				include: {
+					Category: true,
+					Author: true,
+					BookTag: {
+						include: {
+							Tag: true
+						}
+					}
+				},
 			});
 			res.status(201).json({ data: book });
 			break;
